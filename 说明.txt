@@ -1,0 +1,7 @@
+cd /docker/node/nodeapi/NodeApicd   这是路径
+
+启动命令
+nohup node app.js > output.log 2>&1 &
+使用disown命令
+disown
+disown 命令来移除作业与当前终端的关联。这样，即使关闭终端，程序也会继续运行
