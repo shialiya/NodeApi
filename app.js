@@ -6,6 +6,7 @@ const bodyParser = require('body-parser');
 
 app.use(cors());
 app.use('/web', express.static('web'));
+const UserAgent = require('user-agents');
 
 const PORT = process.env.PORT || 55555;
 app.listen(PORT, () => {
@@ -20,5 +21,11 @@ app.post('/getBattleLogin', bodyParser.json(), bodyParser.urlencoded({ extended:
     var password = req.body.password;
     var srpParams = req.body.srpParams;
     res.json(getdata(srpParams,password));
+
+});
+
+app.get('/randUa' , (req, res) => {
+
+    res.send(new UserAgent( ).toString());
 
 });
