@@ -11,9 +11,8 @@ const UserAgent = require('user-agents');
 const PORT = process.env.PORT || 55555;
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
-
-
 });
+
 
 const {  getdata} = require('./BattleSrp.js');
 
