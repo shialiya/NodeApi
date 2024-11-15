@@ -16,15 +16,39 @@ app.listen(PORT, () => {
 
 const {  getdata} = require('./BattleSrp.js');
 
-app.post('/getBattleLogin', bodyParser.json(), bodyParser.urlencoded({ extended: false }),async  function(req, res) {
-    var password = req.body.password;
-    var srpParams = req.body.srpParams;
-    res.json(getdata(srpParams,password));
+app.post('/getBattleLogin', bodyParser.json(), bodyParser.urlencoded({ extended: false }), async function(req, res) {
+    try {
+        const password = req.body.password;
+        const srpParams = req.body.srpParams;
 
+        // 检查 srpParams 和 srpParams.modulus 是否存在
+        if (!srpParams || !srpParams.modulus) {
+            console.log("Received body:", req.body);  // 打印接收到的 body 信息
+            return res.status(400).json({ error: "srpParams or srpParams.modulus is missing" });
+        }
+
+        // 调用 getdata 并返回结果
+        res.json(getdata(srpParams, password));
+    } catch (error) {
+        // 捕获异常并打印错误信息和接收到的 body
+        console.error("Error occurred in /getBattleLogin:", error);
+        console.log("接收到的信息为:", req.body);  // 打印接收到的 body 信息
+
+        // 返回一个错误响应，但不直接终止程序
+        res.status(500).json({ error: "An internal server error occurred" });
+    }
 });
 
 app.get('/randUa' , (req, res) => {
+    try {
 
     res.send(new UserAgent( ).toString());
+    } catch (error) {
+        // 捕获异常并打印错误信息和接收到的 body
+        console.error("获取获取ua错误", error);
+        console.log("Received body:", req.body);  // 打印接收到的 body 信息
 
+        // 返回一个错误响应，但不直接终止程序
+        res.status(500).json({ error: "An internal server error occurred" });
+    }
 });
