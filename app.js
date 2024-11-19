@@ -42,10 +42,11 @@ app.post('/getBattleLogin', bodyParser.json(), bodyParser.urlencoded({ extended:
 app.get('/randUa' , (req, res) => {
     try {
         // new UserAgent( ) ;
-        const userAgent = new UserAgent({
-            deviceCategory: 'mobile',
-            platform: /Linux/
-        });
+        // const userAgent = new UserAgent({
+        //     deviceCategory: 'mobile',
+        //     platform: /Linux/
+        // });
+        const userAgent =  new UserAgent( ) ;
     res.send(userAgent.toString());
     } catch (error) {
         // 捕获异常并打印错误信息和接收到的 body
