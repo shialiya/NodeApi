@@ -24,4 +24,9 @@ pm2 start app.js -i max
 --此为centos9开放所有端口命令
 sudo firewall-cmd --zone=public --add-port=55555/tcp --permanent
 
+
+-- 刪除掉所有pm管理的服务
+pm2 stop all && pm2 delete all
+
+
 这是分不同端口启动
