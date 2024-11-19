@@ -11,7 +11,17 @@ nohup   node app.js > output2.log 2>&1 &
 
 nohup PORT=55557 node app.js > output2.log 2>&1 &
 
+--
+安装pm2
+
 --指定端口并且进入
 PORT=55558 node app.js
+
+使用pm2开启集群,
+pm2 start app.js -i max
+
+
+--此为centos9开放所有端口命令
+sudo firewall-cmd --zone=public --add-port=55555/tcp --permanent
 
 这是分不同端口启动

@@ -41,8 +41,12 @@ app.post('/getBattleLogin', bodyParser.json(), bodyParser.urlencoded({ extended:
 
 app.get('/randUa' , (req, res) => {
     try {
-
-    res.send(new UserAgent( ).toString());
+        // new UserAgent( ) ;
+        const userAgent = new UserAgent({
+            deviceCategory: 'mobile',
+            platform: /Linux/
+        });
+    res.send(userAgent.toString());
     } catch (error) {
         // 捕获异常并打印错误信息和接收到的 body
         console.error("获取获取ua错误", error);
