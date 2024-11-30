@@ -39,7 +39,7 @@ app.post('/getBattleLogin', bodyParser.json(), bodyParser.urlencoded({ extended:
     }
 });
 
-app.get('/randUa' , (req, res) => {
+app.get('/randUa2' , (req, res) => {
     try {
         // new UserAgent( ) ;
         // const userAgent = new UserAgent({
