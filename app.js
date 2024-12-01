@@ -58,7 +58,7 @@ app.get('/randUa2' , (req, res) => {
         res.status(500).json({ error: "An internal server error occurred" });
     }
 });
-app.get('/getAirBnbbda' , bodyParser.json(), bodyParser.urlencoded({ extended: false }), async function(req, res) {
+app.post('/getAirBnbbda' , bodyParser.json(), bodyParser.urlencoded({ extended: false }), async function(req, res) {
     try {
         // new UserAgent( ) ;
         // const userAgent = new UserAgent({
