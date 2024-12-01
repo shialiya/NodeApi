@@ -15,6 +15,7 @@ app.listen(PORT, () => {
 
 
 const {  getdata} = require('./BattleSrp.js');
+const {  getAirBnbbda} = require('./airbnb/airbnb.js');
 
 app.post('/getBattleLogin', bodyParser.json(), bodyParser.urlencoded({ extended: false }), async function(req, res) {
     try {
@@ -55,5 +56,31 @@ app.get('/randUa2' , (req, res) => {
 
         // 返回一个错误响应，但不直接终止程序
         res.status(500).json({ error: "An internal server error occurred" });
+    }
+});
+app.get('/getAirBnbbda' , bodyParser.json(), bodyParser.urlencoded({ extended: false }), async function(req, res) {
+    try {
+        // new UserAgent( ) ;
+        // const userAgent = new UserAgent({
+        //     deviceCategory: 'mobile',
+        //     platform: /Linux/
+        // });
+        if ( !req.body ){
+            return res.status(400).json({ error: "ua不能为空" });
+
+        }
+        const ua = req.body.UserAgent;
+        if (!ua){
+            return res.status(400).json({ error: "ua不能为空" });
+
+        }
+        res.send(getAirBnbbda(ua));
+    } catch (error) {
+        // 捕获异常并打印错误信息和接收到的 body
+        console.error("获取获取ua错误", error);
+        console.log("Received body:", req.body);  // 打印接收到的 body 信息
+
+        // 返回一个错误响应，但不直接终止程序
+        res.status(500).json({ error: "错误" });
     }
 });
