@@ -15,6 +15,7 @@
     "cors": "^2.8.5",
     "deasync": "^0.1.30",
     "express": "^4.21.1",
+    "nodeapi": "file:",
     "user-agents": "^1.1.357"
   }
 }
