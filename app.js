@@ -13,6 +13,7 @@ app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });
 
+const adsService = require('./service/AdsService.js');
 
 const {  getdata} = require('./BattleSrp.js');
 const {  getAirBnbbda} = require('./airbnb/airbnb.js');
@@ -111,6 +112,101 @@ app.post('/getUberCard' , bodyParser.json(), bodyParser.urlencoded({ extended: f
     } catch (error) {
         // 捕获异常并打印错误信息和接收到的 body
         console.error("获取uber加密错误", error);
+        console.log("Received body:", req.body);  // 打印接收到的 body 信息
+
+        // 返回一个错误响应，但不直接终止程序
+        res.status(500).json({ error: "错误" });
+    }
+});
+/**
+ * ads 创建窗口
+ */
+app.post('/adsCreateUser' , bodyParser.json(), bodyParser.urlencoded({ extended: false }), async function(req, res) {
+    try {
+        const json= await  adsService.createUser(req.body);
+        res.send(json);
+        console.log(JSON.stringify(json) +"创建窗口"+new Date());
+
+    } catch (error) {
+        // 捕获异常并打印错误信息和接收到的 body
+        console.error("adsCreateUser错误", error);
+        console.log("Received body:", req.body);  // 打印接收到的 body 信息
+
+        // 返回一个错误响应，但不直接终止程序
+        res.status(500).json({ error: "错误" });
+    }
+});
+/**
+ * ads 打开窗口
+ */
+app.get('/adsOpen', bodyParser.json(), bodyParser.urlencoded({ extended: false }), async function(req, res) {
+    try {
+
+        const browserId = req.query.browserId;  // 使用 query 获取 GET 请求中的参数
+        console.log(browserId+"打开窗口窗口"+new Date());
+        const json=    await adsService.open(browserId);
+        res.send(json);
+    } catch (error) {
+        // 捕获异常并打印错误信息和接收到的 body
+        console.error("adsOpen错误", error);
+        console.log("Received body:", req.body);  // 打印接收到的 body 信息
+
+        // 返回一个错误响应，但不直接终止程序
+        res.status(500).json({ error: "错误" });
+    }
+});
+/**
+ * ads 修改窗口
+ */
+app.post('/adsUpdateUser' , bodyParser.json(), bodyParser.urlencoded({ extended: false }), async function(req, res) {
+    try {
+        const json=     await  adsService.updateUser(req.body);
+        res.send(json);
+        console.log(req.body.user_id+"修改窗口"+new Date());
+
+    } catch (error) {
+        // 捕获异常并打印错误信息和接收到的 body
+        console.error("adsOpen错误", error);
+        console.log("Received body:", req.body);  // 打印接收到的 body 信息
+
+        // 返回一个错误响应，但不直接终止程序
+        res.status(500).json({ error: "错误" });
+    }
+});
+/**
+ * ads 关闭窗口
+ */
+app.get('/adsStopBrowser', bodyParser.json(), bodyParser.urlencoded({ extended: false }), async function(req, res) {
+
+    try {
+
+        const browserId=  req.query.browserId;
+        const json=   await adsService.stopBrowser(browserId);
+        res.send(json);
+        console.log(browserId+"关闭窗口"+new Date());
+
+    } catch (error) {
+        // 捕获异常并打印错误信息和接收到的 body
+        console.error("adsStopBrowser错误", error);
+        console.log("Received body:", req.body);  // 打印接收到的 body 信息
+
+        // 返回一个错误响应，但不直接终止程序
+        res.status(500).json({ error: "错误" });
+    }
+});
+/**
+ * ads 删除窗口
+ */
+app.get('/adsDeleteUser', bodyParser.json(), bodyParser.urlencoded({ extended: false }), async function(req, res) {
+    try {
+        const user_ids=  req.query.user_ids;
+        const json=  await adsService.deleteUser(user_ids);
+        res.send(json);
+        console.log(user_ids+"删除窗口"+new Date());
+
+    } catch (error) {
+        // 捕获异常并打印错误信息和接收到的 body
+        console.error("deleteUser错误", error);
         console.log("Received body:", req.body);  // 打印接收到的 body 信息
 
         // 返回一个错误响应，但不直接终止程序
