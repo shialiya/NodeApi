@@ -78,7 +78,16 @@ class AdsService {
 
     // 添加任务到队列
     async _callWithDelay(func) {
-        this.queue.push(func);  // 将函数添加到队列中
+        return new Promise((resolve, reject) => {
+            this.queue.push(async () => {
+                try {
+                    const result = await func();  // 调用传入的异步函数
+                    resolve(result);  // 返回结果
+                } catch (error) {
+                    reject(error);  // 错误处理
+                }
+            });
+        });
     }
 
     // 开始定时调用请求
@@ -287,6 +296,9 @@ class AdsService {
 
 }
 var adsService= new AdsService();
+
+adsService.startProcessing();
+
 module.exports = adsService;
 // async  function text(){
 //    var ss= await adsService.deleteUser("kqxxww5");
