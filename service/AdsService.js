@@ -37,40 +37,71 @@ const fetch = require('fetch-retry')(require('node-fetch'), {
  */
 class AdsService {
 
+    // constructor() {
+    //     this.queue = [];  // 队列，用于保存待调用的函数
+    //     this.isProcessing = false;  // 标志是否正在处理请求
+    // }
+    // async _callWithDelay(func) {
+    //     return new Promise((resolve, reject) => {
+    //         this.queue.push({ func, resolve, reject });
+    //         this._processQueue();  // 尝试处理队列中的请求
+    //     });
+    // }
+    //
+    // // 处理队列中的请求
+    // async _processQueue() {
+    //     if (this.isProcessing) return;  // 如果已经在处理请求，直接返回
+    //     if (this.queue.length === 0) return;  // 如果队列为空，直接返回
+    //
+    //     this.isProcessing = true;  // 设置正在处理状态
+    //
+    //     // 每次调用一个函数，并在三秒后处理下一个
+    //     const { func, resolve, reject } = this.queue.shift();
+    //     try {
+    //         const result = await func();  // 调用队列中的函数
+    //         resolve(result);  // 调用成功，返回结果
+    //     } catch (error) {
+    //         reject(error);  // 调用失败，返回错误
+    //     }
+    //
+    //     // 等待2秒后继续处理队列中的下一个请求
+    //     setTimeout(() => {
+    //         this.isProcessing = false;
+    //         this._processQueue();  // 继续处理下一个请求
+    //     }, 1100);  // 延迟 1.1 秒钟
+    // }
+
     constructor() {
         this.queue = [];  // 队列，用于保存待调用的函数
-        this.isProcessing = false;  // 标志是否正在处理请求
+        this.intervalId = null;  // 用于定时调用的定时器ID
     }
+
+    // 添加任务到队列
     async _callWithDelay(func) {
-        return new Promise((resolve, reject) => {
-            this.queue.push({ func, resolve, reject });
-            this._processQueue();  // 尝试处理队列中的请求
-        });
+        this.queue.push(func);  // 将函数添加到队列中
     }
 
-    // 处理队列中的请求
-    async _processQueue() {
-        if (this.isProcessing) return;  // 如果已经在处理请求，直接返回
-        if (this.queue.length === 0) return;  // 如果队列为空，直接返回
-
-        this.isProcessing = true;  // 设置正在处理状态
-
-        // 每次调用一个函数，并在三秒后处理下一个
-        const { func, resolve, reject } = this.queue.shift();
-        try {
-            const result = await func();  // 调用队列中的函数
-            resolve(result);  // 调用成功，返回结果
-        } catch (error) {
-            reject(error);  // 调用失败，返回错误
+    // 开始定时调用请求
+    startProcessing() {
+        if (this.intervalId) {
+            clearInterval(this.intervalId);  // 清除已有的定时器
         }
 
-        // 等待2秒后继续处理队列中的下一个请求
-        setTimeout(() => {
-            this.isProcessing = false;
-            this._processQueue();  // 继续处理下一个请求
-        }, 2000);  // 延迟 2 秒钟
+        this.intervalId = setInterval(() => {
+            if (this.queue.length > 0) {
+                const func = this.queue.shift();  // 获取队列中的第一个函数
+                func();  // 调用它
+            }
+        }, 3000);  // 每 3 秒钟执行一次
     }
 
+    // 停止定时调用
+    stopProcessing() {
+        if (this.intervalId) {
+            clearInterval(this.intervalId);  // 清除定时器
+            this.intervalId = null;
+        }
+    }
 
     async createUser(data) {
         return this._callWithDelay(() => this._createUser(data));
