@@ -101,7 +101,7 @@ class AdsService {
                 const func = this.queue.shift();  // 获取队列中的第一个函数
                 func();  // 调用它
             }
-        }, 3000);  // 每 3 秒钟执行一次
+        }, 1500);  // 每 3 秒钟执行一次
     }
 
     // 停止定时调用
