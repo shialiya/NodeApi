@@ -64,11 +64,11 @@ class AdsService {
             reject(error);  // 调用失败，返回错误
         }
 
-        // 等待三秒后继续处理队列中的下一个请求
+        // 等待2秒后继续处理队列中的下一个请求
         setTimeout(() => {
             this.isProcessing = false;
             this._processQueue();  // 继续处理下一个请求
-        }, 3000);  // 延迟 3 秒钟
+        }, 2000);  // 延迟 2 秒钟
     }
 
 
