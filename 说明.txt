@@ -19,6 +19,7 @@ PORT=55558 node app.js
 
 使用pm2开启集群,
 pm2 start app.js -i max
+pm2 start app.js -i 30
 
 
 --此为centos9开放所有端口命令
@@ -30,3 +31,6 @@ pm2 stop all && pm2 delete all
 
 
 这是分不同端口启动
+-- 单独启动
+
+cross-env TZ=Asia/Shanghai node --max-old-space-size=11096 app.js
