@@ -1,11 +1,11 @@
 var host = "http://127.0.0.1:";
-var port = 50325;
+var port = 40080;
 var urlQian = host + port
 const axios = require('axios').default;
 const fetch = require('fetch-retry')(require('node-fetch'), {
     retries: 1,
     retryDelay: (attempt, error, response) => Math.pow(2, attempt) * 1000,
-    fetchTimeout: 60000,  // 超时时间为8000毫秒（5秒）
+    fetchTimeout: 80000,  // 超时时间为80秒
     retryOn: (attempt, error, response) => {
 
         if (attempt >= 2) {
@@ -35,7 +35,7 @@ const fetch = require('fetch-retry')(require('node-fetch'), {
  * @param data
  * @returns {Promise<unknown>}
  */
-class AdsService {
+class LinkenService {
 
     // constructor() {
     //     this.queue = [];  // 队列，用于保存待调用的函数
@@ -112,18 +112,18 @@ class AdsService {
         }
     }
 
-    async createUser(data) {
-        return this._callWithDelay(() => this._createUser(data));
+    async createUser() {
+        return this._callWithDelay(() => this._createUser());
     }
     //创建窗口
-    async _createUser(data) {  // 这个函数接收一个参数 data
+    async _createUser() {  // 这个函数接收一个参数 data
         try {
-            const response = await fetch(`${urlQian}/api/v1/user/create`, {
+            const response = await fetch(`${urlQian}/sessions/create_quick`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(data) // 将 data 转为 JSON 字符串
+                body: JSON.stringify({count:1}) // 将 data 转为 JSON 字符串
             });
 
             if (!response.ok) {
@@ -149,32 +149,30 @@ class AdsService {
      * @param profileId 配置id
      * @returns {Promise<{success: boolean, message: string}|{success: boolean, message: *}|any>}
      */
-    async _open(profileId) {
+    async _open(data) {
 
         let responseJson =   null;
         let  responseBody =  null;
         try {
-             const resp = await fetch(`${urlQian}/api/v1/browser/start?user_id=${profileId}&clear_cache_after_closing=1`, {
-                method: 'GET'
-            });
+             const resp = await fetch(`${urlQian}/sessions/start`, {
+                 method: 'POST',
+                 body: JSON.stringify(data) // 将 data 转为 JSON 字符串
 
-
+             });
             const res=await resp.json();
-
-
             responseBody = JSON.stringify(res);
-            if (res.code === 0 && res.data.ws && res.data.ws.puppeteer) {
+            if (res.debug_port != 0 && res.uuid ) {
                 // const browser = await puppeteer.connect({browserWSEndpoint: res.data.data.ws.puppeteer, defaultViewport: null});
                 // const page = await browser.newPage();
-                // await page.goto('https://www.adspower.com');
-                // await page.screenshot({ path: './adspower.png' });
+                // await page.goto('https://www.linkenpower.com');
+                // await page.screenshot({ path: './linkenpower.png' });
                 // await browser.close();
                 return res;
             } else {
                 return {success: false, message: "Data condition not met in response."+responseBody+"当前浏览器为"+profileId};
             }
         } catch (err) {
-            console.log(err.message+"ads返回"+responseBody);
+            console.log(err.message+"linken返回"+responseBody);
             return {success: false, message: err.message};
         }
     }
@@ -293,15 +291,69 @@ class AdsService {
             throw error;
         }
     }
+    //修改代理信息
+    async updateConnection(data) {
+        return this._callWithDelay(() => this._updateConnection(data));
+    }
+    //修改代理信息
+    async _updateConnection(data) {
+        // 这个函数接收一个参数 data
+        try {
+            const response = await fetch(`${urlQian}/sessions/connection`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data) // 将 data 转为 JSON 字符串
+            });
 
+            if (!response.ok) {
+                // 如果响应状态码不是 2xx，抛出错误
+                const errorText = await response.text(); // 获取错误响应文本
+                throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
+            }
+
+            // 返回 JSON 格式的响应体
+            const result = await response.json();
+            return result;
+        } catch (error) {
+            // 捕获错误并抛出
+            throw error;
+        }
+    }
+
+    /**
+     * 创建会话并打开窗口
+     * @param data 需要打开窗口的数据
+     * @returns {Promise<void>}
+     */
+    async create_quick_proxy_open(data) {
+
+        //创建窗口
+        const newUser= await this.createUser();
+        const  uuid =newUser[0].uuid;
+        //修改代理
+        data.uuid=uuid;
+        await this.updateConnection(data);
+        const startData={
+            "uuid": uuid,
+            "headless": false,
+            "disable_images": false,
+            "chromium_args": "--blink-settings=imagesEnabled=false"
+
+        }
+        //打开窗口
+        const  port_uuid= await this.open(data);
+        return port_uuid;
+    }
 }
-var adsService= new AdsService();
+var linkenService= new LinkenService();
 
-adsService.startProcessing();
+linkenService.startProcessing();
 
-module.exports = adsService;
+module.exports = linkenService;
 // async  function text(){
-//    var ss= await adsService.deleteUser("kqxxww5");
+//    var ss= await linkenService.deleteUser("kqxxww5");
 //    console.log(ss);
 // }
 // text();
