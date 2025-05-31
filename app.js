@@ -217,11 +217,32 @@ app.get('/adsDeleteUser', bodyParser.json(), bodyParser.urlencoded({ extended: f
 /**
  * linken 创建并且打开窗口
  */
-app.post('/linkenCreateUser' , bodyParser.json(), bodyParser.urlencoded({ extended: false }), async function(req, res) {
+app.post('/linkenCreateUserOpen' , bodyParser.json(), bodyParser.urlencoded({ extended: false }), async function(req, res) {
     try {
         const json= await  linkenService.create_quick_proxy_open(req.body);
         res.send(json);
         console.log(JSON.stringify(json) +"打开窗口"+new Date());
+
+    } catch (error) {
+        // 捕获异常并打印错误信息和接收到的 body
+        console.error("adsCreateUser错误", error);
+        console.log("Received body:", req.body);  // 打印接收到的 body 信息
+
+        // 返回一个错误响应，但不直接终止程序
+        res.status(500).json({ error: "错误" });
+    }
+});
+
+/**
+ * linken 删除并关闭窗口
+ */
+app.get('/linkenStopDelete', bodyParser.json(), bodyParser.urlencoded({ extended: false }), async function(req, res) {
+    try {
+
+        const uuid=  req.query.uuid;
+        const json= await  linkenService.stopDelete(uuid);
+        res.send(json);
+        console.log("关闭删除流程结束"+new Date());
 
     } catch (error) {
         // 捕获异常并打印错误信息和接收到的 body

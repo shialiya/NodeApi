@@ -184,15 +184,16 @@ class LinkenService {
      * @param profileId 配置id
      * @returns {Promise<null|any>}
      */
-    async _stopBrowser(profileId) {
-        const url = `${urlQian}/api/v1/browser/stop?user_id=${profileId}`;
-
+    async _stopBrowser(uuid) {
+        const url = `${urlQian}/sessions/stop`;
+        const data = {
+            uuid: uuid
+        };
         try {
             const response = await fetch(url, {
-                method: 'GET',  // 使用 GET 方法
-                headers: {}  // 请求头
+                method: 'POST',  // 使用 GET 方法
+                body: JSON.stringify(data)
             });
-
             // 返回 JSON 格式的响应
             return await response.json();
         } catch (error) {
@@ -209,51 +210,27 @@ class LinkenService {
      * @param user_ids
      * @returns {Promise<null|any>}
      */
-    async _deleteUser(user_ids) {
+    async _deleteUser(uuid) {
         const data = {
-            user_ids: [user_ids]
+            uuid: uuid
         };
-
         console.log(data);
-
-        const url = `${urlQian}/api/v1/user/delete`;
-
+        const url = `${urlQian}/sessions`;
         // 配置请求头
         const headers = {
             'Content-Type': 'application/json'
         };
-
         try {
             // 发起初始请求
             let response = await fetch(url, {
-                method: 'POST',
+                method: 'DELETE',
                 headers: headers,
                 body: JSON.stringify(data)
             });
 
             let resp = await response.json();
-            let msg = resp.msg;
+            return resp;
 
-            // 检查是否需要停止浏览器再重试
-            while (msg.includes('mailbox users and cannot be deleted')) {
-                console.log('Stopping browser for user:', user_ids[0]);
-
-                // 调用 stopBrowser 方法（确保上下文正确）
-                await this.stopBrowser(user_ids[0]);
-
-                // 等待 5 秒钟
-                await new Promise(resolve => setTimeout(resolve, 5000));
-
-                // 再次尝试删除用户
-                response = await fetch(url, {
-                    method: 'POST',
-                    headers: headers,
-                    body: JSON.stringify(data)
-                });
-
-                resp = await response.json();
-                msg = resp.msg;
-            }
 
             return resp;
         } catch (error) {
@@ -343,8 +320,29 @@ class LinkenService {
 
         }
         //打开窗口
-        const  port_uuid= await this.open(data);
+        const  port_uuid= await this.open(startData);
         return port_uuid;
+    }
+
+    /**
+     * 停止窗口并删除会话
+     * @param data 需要打开窗口的数据
+     * @returns {Promise<void>}
+     */
+    async stopDelete(data) {
+
+        //创建窗口
+        var res= await this.stopBrowser(data);
+        var responseBody = JSON.stringify(res);
+        if (responseBody.includes("error")){
+            console.log("关闭linken时报错"+responseBody);
+        }
+        res =await this.deleteUser(data);
+        responseBody = JSON.stringify(res);
+        if (responseBody.includes("error")){
+            console.log("删除linken时报错"+responseBody);
+        }
+        return responseBody;
     }
 }
 var linkenService= new LinkenService();
