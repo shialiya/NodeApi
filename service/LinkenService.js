@@ -5,7 +5,7 @@ const axios = require('axios').default;
 const fetch = require('fetch-retry')(require('node-fetch'), {
     retries: 1,
     retryDelay: (attempt, error, response) => Math.pow(2, attempt) * 1000,
-    fetchTimeout: 80000,  // 超时时间为80秒
+    fetchTimeout: 100000,  // 超时时间为100秒
     retryOn: (attempt, error, response) => {
 
         if (attempt >= 2) {
@@ -101,7 +101,7 @@ class LinkenService {
                 const func = this.queue.shift();  // 获取队列中的第一个函数
                 func();  // 调用它
             }
-        }, 2000);  // 每 1.8 秒钟执行一次
+        }, 800);  // 每0.8 秒钟执行一次
     }
 
     // 停止定时调用
