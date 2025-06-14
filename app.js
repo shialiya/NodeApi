@@ -19,6 +19,7 @@ const linkenService = require('./service/LinkenService.js');
 const {  getdata} = require('./BattleSrp.js');
 const {  getAirBnbbda} = require('./airbnb/airbnb.js');
 const {  getUberSaveCard} = require('./uber/uber.js');
+const {  walmart} = require('./walmart/walmartEncryption.js');
 
 app.post('/getBattleLogin', bodyParser.json(), bodyParser.urlencoded({ extended: false }), async function(req, res) {
     try {
@@ -119,6 +120,38 @@ app.post('/getUberCard' , bodyParser.json(), bodyParser.urlencoded({ extended: f
         res.status(500).json({ error: "错误" });
     }
 });
+
+app.post('/getWalmartCard' , bodyParser.json(), bodyParser.urlencoded({ extended: false }), async function(req, res) {
+    try {
+        if (!req.body ){
+            return res.status(400).json({ error: "传参不能为空" });
+        }
+        const reqData = req.body.number;
+        if (!reqData){
+            return res.status(400).json({ error: "传参不能为空" });
+        }
+
+        let dataJson = {
+            "number": req.body.number,
+            "cvv": req.body.cvv,
+            "PIEL": req.body.PIEL,
+            "PIEE": req.body.PIEE,
+            "PIEK": req.body.PIEK
+        };
+        res.send(walmart(req.body.number,req.body.cvv,req.body.PIEL,req.body.PIEE,req.body.PIEK));
+        console.log("沃尔玛执行完毕");
+    } catch (error) {
+        // 捕获异常并打印错误信息和接收到的 body
+        console.error("获取uber加密错误", error);
+        console.log("Received body:", req.body);  // 打印接收到的 body 信息
+
+        // 返回一个错误响应，但不直接终止程序
+        res.status(500).json({ error: "错误" });
+    }
+});
+
+// walmart("4147400373263126", "111", 6, 4, "7D75519B8BD3380E6F02D767494EFB8F");
+
 /**
  * ads 创建窗口
  */
