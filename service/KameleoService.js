@@ -101,7 +101,7 @@ class KameleoService {
                 const func = this.queue.shift();  // 获取队列中的第一个函数
                 func();  // 调用它
             }
-        }, 2000);  // 每 1.8 秒钟执行一次
+        }, 500);  // 每 0.5秒钟执行一次
     }
 
     // 停止定时调用
