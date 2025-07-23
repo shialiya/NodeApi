@@ -426,7 +426,7 @@ app.get('/kameleoDeleteUser', bodyParser.json(), bodyParser.urlencoded({ extende
     try {
         const browserId=  req.query.browserId;
         await kameleoService.deleteUser(browserId);
-        console.log(user_ids+"删除窗口"+new Date());
+        console.log(browserId+"删除窗口"+new Date());
 
     } catch (error) {
         // 捕获异常并打印错误信息和接收到的 body
