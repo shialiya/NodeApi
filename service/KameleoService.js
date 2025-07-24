@@ -155,14 +155,7 @@ class KameleoService {
         let  responseBody =  null;
         try {
             const resp = await fetch(`${urlQian}/profiles/${profileId}/start`, {
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
 
-                        arguments: ['headless']
-
-                }),
                 method: 'POST'
             });
             const res=await resp.json();
